@@ -2,7 +2,7 @@
 % Please edit documentation in R/domainChecks.R
 \name{checkStandardSimplex}
 \alias{checkStandardSimplex}
-\title{Domain check for standard simplex \eqn{\{\vec{x} \in R^n : x_i \geq 0, \Vert x \Vert_1 \leq 1 \}}}
+\title{Domain check for standard simplex \eqn{\{\vec{x} \in R^n : x_i \geq 0, \Vert \vec{x} \Vert_1 \leq 1 \}}}
 \usage{
 checkStandardSimplex(x)
 }
@@ -13,11 +13,14 @@ checkStandardSimplex(x)
 Vector where each element (TRUE or FALSE) indicates if a point is in the standard simplex
 }
 \description{
-The function checks if a point (one row in the input argument) is inside the standard simplex \eqn{\{\vec{x} \in R^n : x_i \geq, \Vert x \Vert_1 \leq 1 \}} or not.
+The function checks if a point (one row in the input argument) is inside the standard simplex \eqn{\{\vec{x} \in R^n : x_i \geq, \Vert \vec{x} \Vert_1 \leq 1 \}} or not.
 If the input matrix contains entries that are not numeric, i.e., not representing real numbers, the function throws an error.
 The dimension \eqn{n} is automatically inferred from the input matrix and is equal to the number of columns.
 }
 \examples{
 x <- matrix(rnorm(30),10,3)
 checkStandardSimplex(x)
+}
+\author{
+Klaus Herrmann
 }

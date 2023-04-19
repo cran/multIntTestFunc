@@ -16,6 +16,7 @@
 #' @include AllGeneric.R
 #' @export standardSimplex_exp_sum
 #' @exportClass standardSimplex_exp_sum
+#' @author Klaus Herrmann
 #' @examples
 #' n <- as.integer(3)
 #' f <- new("standardSimplex_exp_sum",dim=n,coeff=1)
@@ -26,7 +27,7 @@ setMethod("exactIntegral","standardSimplex_exp_sum",
     function(object){
         stopifnot(object@dim>=1)
         stopifnot(length(object@coeff)==1,object@coeff > 0)
-        y <- (gamma(object@dim)-gsl::gamma_inc(object@dim,object@coeff)) / ( (object@coeff)^(object@dim) * gamma(object@dim) )
+        y <- ( gamma(object@dim) - stats::pgamma(object@coeff,object@dim,lower=FALSE)*gamma(object@dim) ) / ( (object@coeff)^(object@dim) * gamma(object@dim) ) #alternative based on gsl: y <- (gamma(object@dim)-gsl::gamma_inc(object@dim,object@coeff)) / ( (object@coeff)^(object@dim) * gamma(object@dim) )
     }
 )
 

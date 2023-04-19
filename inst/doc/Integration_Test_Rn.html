@@ -12,7 +12,7 @@
 
 
 
-<title>Monte Carlo Integration Tests for the Unit Hypercube</title>
+<title>Integration Test for Rn</title>
 
 
 <style type="text/css">
@@ -116,62 +116,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Monte Carlo Integration Tests for the Unit Hypercube</h1>
+<h1 class="title toc-ignore">Integration Test for Rn</h1>
 
 
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>We will use the package to test Monte Carlo integration over the unit hypercube <span class="math inline">\(C_n=[0,1]^n\)</span>. The package covers test functions for five different domains, but the interfaces are the same in every case. For each function in this package the exact value of the integral over the respective integration domain is known for any dimension <span class="math inline">\(n\geq 1\)</span>. This allows to check and contrast multivariate integration routines for in different settings such as low, medium and high dimensional. In this vignette we use as an example Monte Carlo type integration due to its simplicity. The interface to the package is the same in all cases:</p>
-<p>We need to instantiate an object from one of the classes. This object represents the function that we want to integrate. Each object (function) has a mandatory variable that represents the dimension of the integral. Other parameters depend on the specific functions. With the instance we then have access to basic information about the function and can evaluate it for a given set of points. These evaluation points are arranged in a matrix where each row represents an evaluation point. The number of columns needs to be equal to the dimension variable that is set when creating the object (function). To check which points in such a matrix are in the integration domain linked to the function one can use <strong>checkDomain</strong>. In total there are six methods that can be used for an instance.</p>
-<ol style="list-style-type: decimal">
-<li><strong>exactIntegral</strong> returns the exact integral of the test function over the domain. The value (generally) depends on the parameters that are set when the function (instance) is created. <em>The function also checks if the given parameters of the function are correctly specified</em>.</li>
-<li><strong>domainCheck</strong> checks for each row in a given matrix if this point is inside the integration domain for a given function and returns a vector with Boolean values. This can be used to check if the node points of a multivariate integration routine are correctly specified. <em>The function checks if the input matrix has real entries and the correct dimensions. The function also checks if the given parameters of the function are correctly specified</em>.</li>
-<li><strong>evaluate</strong> evaluates the function for each row of a given input matrix and returns a vector. Based on the evaluations the numerical integration can be performed. <em>The function checks if the input matrix has real entries and the correct dimensions. The function also checks if the given parameters of the function are correctly specified</em>.</li>
-<li><strong>getIntegrationDomain</strong> provides a string that represents the integration domain for the function.</li>
-<li><strong>getTags</strong> provides a vector of strings with tags associated to the specific function.</li>
-<li><strong>getReferences</strong> provides a vector of strings with references that provide more details for this function. The first entry provides the subsection number in the &quot;documentation_test_functions.pdf&quot; file that provides details on the specific function.</li>
-</ol>
-<p><strong>Warning: The numerical integration scheme utilized in the following section is only used to showcase the package and its functions. It is not intended as an examples of a &quot;best practice&quot; when it comes to multivariate numerical integration.</strong></p>
-</div>
-<div id="monte-carlo-integration-on-the-unit-hypercube-c_n01n" class="section level2">
-<h2>Monte Carlo Integration on the Unit Hypercube <span class="math inline">\(C_n=[0,1]^n\)</span></h2>
-<p>We exemplify the usage of the package by numerically integrate over the unit hypercube <span class="math inline">\(C_n = [0,1]^n\)</span>. In this case Monte Carlo integration works straight out of the box with standard uniform (pseudo) random numbers. If <span class="math inline">\(\vec{U} = (U_1,\ldots,U_n)\)</span> is uniformly distributed over <span class="math inline">\(C_n\)</span> we can approximate the integral of a function <span class="math inline">\(f\)</span> via <span class="math display">\[
-\int_{C_n} f(\vec{x}) d\vec{x} = \mathbb{E}[f(\vec{U})] \approx \frac{1}{n} \sum_{i=1}^n f(\vec{U}_i),
-\]</span> where the law of large numbers is used with independent copies <span class="math inline">\(\vec{U}_i\)</span>, <span class="math inline">\(1\leq i\leq n\)</span>, of <span class="math inline">\(\vec{U}\)</span>. It is easy to generate such independent copies by simply drawing independent (pseudo) random numbers. For example, for the specific choice of <span class="math inline">\(f\)</span> as <span class="math display">\[
-f(\vec{x}) = (\cos( a_1x_1+\ldots+a_n x_n ))^2
-\]</span> we have <span class="math display">\[
-\int_{C_n} f(\vec{x}) d\vec{x} = \frac{1}{2} + \frac{1}{2}\cos(a_1+\ldots+a_n)\prod_{i=1}^n\frac{\sin(a_j)}{a_j},
-\]</span> where <span class="math inline">\(a_i\neq 0\)</span>. We can now compare the numerical integration outlined above to the theoretical value as follows.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(multIntTestFunc)
-<span class="kw">set.seed</span>(<span class="dv">42</span>)
+<p>We will use a product rule based on Gauss-Hermite quadrature to integrate test functions over the multivariate real numbers <span class="math inline">\(R^n = (-\infty,\infty)^n\)</span>. Due to the exponential increase of node points in the number of dimensions, product rules are not recommended for high dimensional integration. They are however easy to compute benchmarks and we will use them for this reason. We start by creating the product rule nodes and weights.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(multIntTestFunc)</code></pre></div>
+<pre><code>## Loading required package: multIntTestFunc</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(statmod)</code></pre></div>
+<pre><code>## Loading required package: statmod</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="dv">2</span>)
 
-n &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="dv">4</span>) <span class="co">#the dimension needs to be of type &quot;integer&quot;</span>
-coeffs &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span>n <span class="co">#get example coefficients</span>
-f &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;unitCube_cos2&quot;</span>,<span class="dt">coeffs=</span>coeffs,<span class="dt">dim=</span>n) <span class="co">#create instance</span>
+hermite &lt;-<span class="st"> </span><span class="kw">gauss.quad</span>(<span class="dv">10</span>,<span class="st">&quot;hermite&quot;</span>)
+multHermite &lt;-<span class="st"> </span><span class="kw">pIntRule</span>(hermite,n)
+nodes &lt;-<span class="st"> </span>multHermite<span class="op">$</span>nodes
+weights &lt;-<span class="st"> </span>multHermite<span class="op">$</span>weights
 
-<span class="co">#print some information on the function</span>
-<span class="kw">print</span>(<span class="kw">getIntegrationDomain</span>(f))</code></pre></div>
-<pre><code>## [1] &quot;standard unit hypercube: 0 &lt;= x_i &lt;= 1&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">getTags</span>(f))</code></pre></div>
-<pre><code>## [1] &quot;unit hypercube&quot; &quot;smooth&quot;         &quot;cos&quot;            &quot;continuous&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">getReferences</span>(f))</code></pre></div>
-<pre><code>## [1] &quot;C.1&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#evaluate integral by simple Monte Carlo integration</span>
-N &lt;-<span class="st"> </span><span class="dv">10000</span> <span class="co">#choose number of node points</span>
-U &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(N<span class="op">*</span>n),N,n) <span class="co">#arrange points in matrix</span>
+f &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rn_Gauss&quot;</span>,<span class="dt">dim=</span>n)
 
-D &lt;-<span class="st"> </span><span class="kw">domainCheck</span>(f,U) <span class="co">#check if the points are in the integration domain</span>
-U &lt;-<span class="st"> </span>U[D,] <span class="co">#select the points in the integration domain (here f is supported over C_n so we take all points)</span>
-U &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(U,<span class="dt">ncol=</span>n) <span class="co">#arrange points in matrix - only necessary because for n=1 we might get a vector, but we need a matrix input for our evaluate function</span>
-
-eval &lt;-<span class="st"> </span><span class="kw">evaluate</span>(f,U) <span class="co">#evaluate the function f on the points U</span>
-approx &lt;-<span class="st"> </span><span class="kw">mean</span>(eval) <span class="co">#approximate the expectation by average</span>
+eval &lt;-<span class="st"> </span><span class="kw">evaluate</span>(f,nodes)
+approx &lt;-<span class="st"> </span><span class="kw">sum</span>(weights<span class="op">*</span>eval)
 <span class="kw">print</span>(approx)</code></pre></div>
-<pre><code>## [1] 0.4967258</code></pre>
+<pre><code>## [1] 1.570726</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#print exact integral</span>
 <span class="kw">print</span>(<span class="kw">exactIntegral</span>(f))</code></pre></div>
-<pre><code>## [1] 0.5014285</code></pre>
+<pre><code>## [1] 3.141593</code></pre>
 </div>
 
 

@@ -1,8 +1,8 @@
 Type: Package
 Package: multIntTestFunc
 Title: Provides Test Functions for Multivariate Integration
-Version: 0.2.0
-Author: Klaus Herrmann [aut, cre]
+Version: 0.3.0
+Authors@R: person(given = "Klaus", family = "Herrmann", role = c("aut", "cre"), email = "klaus.herrmann@usherbrooke.ca", comment = c(ORCID = "0000-0002-8044-5717"))
 Maintainer: Klaus Herrmann <klaus.herrmann@usherbrooke.ca>
 Description: Provides implementations of functions that can be used to
     test multivariate integration routines. The package covers six
@@ -20,16 +20,18 @@ Imports: methods, mvtnorm, pracma, stats
 Suggests: knitr, rmarkdown, statmod, testthat
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1.9000
 Collate: 'AllGeneric.R' 'Pn_lognormalDensity.R' 'Pn_logtDensity.R'
         'Rn_Gauss.R' 'Rn_floorNorm.R' 'Rn_normalDensity.R'
         'Rn_tDensity.R' 'domainChecks.R' 'misc.R' 'multIntTestFunc.R'
         'standardSimplex_Dirichlet.R' 'standardSimplex_exp_sum.R'
         'unitBall_normGauss.R' 'unitBall_polynomial.R'
-        'unitCube_BFN4.R' 'unitCube_cos2.R' 'unitCube_floor.R'
-        'unitCube_max.R' 'unitSphere_innerProduct1.R'
-        'unitSphere_polynomial.R'
+        'unitCube_BFN1.R' 'unitCube_BFN2.R' 'unitCube_BFN3.R'
+        'unitCube_BFN4.R' 'unitCube_Genz1.R' 'unitCube_cos2.R'
+        'unitCube_floor.R' 'unitCube_max.R'
+        'unitSphere_innerProduct1.R' 'unitSphere_polynomial.R'
 NeedsCompilation: no
-Packaged: 2023-04-19 01:18:49 UTC; herk1401
+Packaged: 2024-09-07 13:21:57 UTC; klaus
+Author: Klaus Herrmann [aut, cre] (<https://orcid.org/0000-0002-8044-5717>)
 Repository: CRAN
-Date/Publication: 2023-04-19 10:00:02 UTC
+Date/Publication: 2024-09-07 13:40:02 UTC
